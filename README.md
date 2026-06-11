@@ -12,7 +12,7 @@
 ```
 git clone https://github.com/themidnightdev404/hangman.git
 cd hangman
-go run main.go
+go run .
 ```
 
 ## Как играть
