@@ -4,30 +4,34 @@ import (
 	"bufio"
 	"fmt"
 	"os"
+	"strings"
 )
 
 func main() {
 	words := loadWords()
-
+	reader := bufio.NewReader(os.Stdin)
 	for {
 		ClearTerminal()
-		var game string
 
 		fmt.Println("1 - Новая игра")
 		fmt.Println("2 - Выйти")
-		fmt.Scan(&game)
+		choice, _ := reader.ReadString('\n')
+		choice = strings.TrimSpace(choice)
 
-		if game == "1" {
+		if choice == "1" {
 			fmt.Println("Начинаем игру")
 			random := getRandomWord(words)
-			PlayGame(random)
+			PlayGame(random, reader)
 
 			fmt.Println("\nНажмите Enter, чтобы вернуться в меню...")
-			bufio.NewReader(os.Stdin).ReadBytes('\n')
-			bufio.NewReader(os.Stdin).ReadBytes('\n')
-		} else {
+			reader.ReadBytes('\n')
+		} else if choice == "2" {
 			fmt.Println("Выходим")
 			os.Exit(0)
+		} else {
+			fmt.Println("Введено не правильное значение")
+			fmt.Println("\nНажмите Enter, чтобы продолжить...")
+			reader.ReadBytes('\n')
 		}
 	}
 }

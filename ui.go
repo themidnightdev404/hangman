@@ -3,14 +3,11 @@ package main
 import (
 	"bufio"
 	"fmt"
-	"os"
-	"os/exec"
-	"runtime"
 	"strings"
 	"unicode"
 )
 
-var STAGES = [7]string{
+var stages = [7]string{
 	`
   +---+
 
@@ -81,15 +78,15 @@ var STAGES = [7]string{
 =========`,
 }
 
-func PlayGame(word string) {
+func PlayGame(word string, reader *bufio.Reader) {
 	game := NewGame(word)
 	var input string
 	for {
 		ClearTerminal()
 
-		fmt.Println(STAGES[game.Mistakes])
+		fmt.Println(stages[game.Mistakes])
 
-		printWordState(game.Word, game.Guessed)
+		printWordState(game.Word, game.UsedLetter)
 		fmt.Println()
 
 		fmt.Print("Использованные буквы: ")
@@ -99,40 +96,37 @@ func PlayGame(word string) {
 		fmt.Println()
 
 		fmt.Print("Введите букву: ")
-		fmt.Scan(&input)
+		input, _ = reader.ReadString('\n')
+		input = strings.TrimSpace(input)
 		input = strings.ToLower(input)
 		if len([]rune(input)) != 1 {
 			fmt.Println("Пожалуйста, введите только одну букву")
-			fmt.Println("Нажмите Enter, чтобы продолжить")
-			bufio.NewReader(os.Stdin).ReadBytes('\n')
-			bufio.NewReader(os.Stdin).ReadBytes('\n')
+			fmt.Println("Нажмите Enter, чтобы продолжить...")
+			reader.ReadBytes('\n')
 			continue
 		}
 		char := []rune(input)[0]
 		if !unicode.Is(unicode.Cyrillic, char) {
 			fmt.Println("Введите букву русского алфавита!")
-			fmt.Println("Нажмите Enter, чтобы продолжить")
-			bufio.NewReader(os.Stdin).ReadBytes('\n')
-			bufio.NewReader(os.Stdin).ReadBytes('\n')
+			fmt.Println("Нажмите Enter, чтобы продолжить...")
+			reader.ReadBytes('\n')
 			continue
 		}
 		if game.UsedLetter[char] {
 			fmt.Println("Вы уже вводили эту букву! Попробуйте другую.")
-			fmt.Println("Нажмите Enter, чтобы продолжить")
-			bufio.NewReader(os.Stdin).ReadBytes('\n')
-			bufio.NewReader(os.Stdin).ReadBytes('\n')
+			fmt.Println("Нажмите Enter, чтобы продолжить...")
+			reader.ReadBytes('\n')
 			continue
 		}
-		game.UsedLetter[char] = true
-		game.Guess(input)
+		game.Guess(char)
 		if game.IsWin() {
 			fmt.Println("Поздравляем! Слово \"" + game.Word + "\" угадано!")
 			break
 		}
 		if game.IsLose() {
 			ClearTerminal()
-			fmt.Println(STAGES[game.Mistakes])
-			printWordState(game.Word, game.Guessed)
+			fmt.Println(stages[game.Mistakes])
+			printWordState(game.Word, game.UsedLetter)
 			fmt.Println()
 			fmt.Println("Не повезло! Правильный ответ:", game.Word)
 			break
@@ -142,10 +136,9 @@ func PlayGame(word string) {
 
 }
 
-func printWordState(word string, guessed []string) {
+func printWordState(word string, guessed map[rune]bool) {
 	for _, letter := range word {
-		guessedStr := strings.Join(guessed, "")
-		if strings.Contains(guessedStr, string(letter)) {
+		if guessed[letter] {
 			fmt.Print(string(letter) + " ")
 		} else {
 			fmt.Print("_ ")
@@ -155,12 +148,5 @@ func printWordState(word string, guessed []string) {
 }
 
 func ClearTerminal() {
-	var cmd *exec.Cmd
-	if runtime.GOOS == "windows" {
-		cmd = exec.Command("cmd", "/c", "cls")
-	} else {
-		cmd = exec.Command("clear")
-	}
-	cmd.Stdout = os.Stdout
-	cmd.Run()
+	fmt.Print("\033[H\033[2J")
 }

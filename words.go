@@ -5,10 +5,11 @@ import (
 	"fmt"
 	"math/rand"
 	"os"
+	"strings"
 )
 
 func loadWords() []string {
-	file, err := os.Open("Words.txt")
+	file, err := os.Open("words.txt")
 	if err != nil {
 		fmt.Println("Ошибка открытия файла:", err)
 		os.Exit(1)
@@ -21,7 +22,7 @@ func loadWords() []string {
 	for scanner.Scan() {
 		line := scanner.Text()
 		if line != "" {
-			words = append(words, line)
+			words = append(words, strings.ToLower(line))
 		}
 	}
 
