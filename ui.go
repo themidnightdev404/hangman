@@ -148,5 +148,5 @@ func printWordState(word string, guessed map[rune]bool) {
 }
 
 func ClearTerminal() {
-	fmt.Print("\033[H\033[2J")
+	fmt.Print("\033[2J\033[H\033[3J")
 }

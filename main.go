@@ -29,7 +29,7 @@ func main() {
 			fmt.Println("Выходим")
 			os.Exit(0)
 		} else {
-			fmt.Println("Введено не правильное значение")
+			fmt.Println("⚠️ Упс! Такого пункта в меню нет. Попробуйте еще раз.")
 			fmt.Println("\nНажмите Enter, чтобы продолжить...")
 			reader.ReadBytes('\n')
 		}
