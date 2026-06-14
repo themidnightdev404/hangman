@@ -18,17 +18,20 @@ func main() {
 		choice, _ := reader.ReadString('\n')
 		choice = strings.TrimSpace(choice)
 
-		if choice == "1" {
+		switch choice {
+		case "1":
 			fmt.Println("Начинаем игру")
 			random := getRandomWord(words)
 			PlayGame(random, reader)
 
 			fmt.Println("\nНажмите Enter, чтобы вернуться в меню...")
 			reader.ReadBytes('\n')
-		} else if choice == "2" {
+
+		case "2":
 			fmt.Println("Выходим")
 			os.Exit(0)
-		} else {
+
+		default:
 			fmt.Println("⚠️ Упс! Такого пункта в меню нет. Попробуйте еще раз.")
 			fmt.Println("\nНажмите Enter, чтобы продолжить...")
 			reader.ReadBytes('\n')
